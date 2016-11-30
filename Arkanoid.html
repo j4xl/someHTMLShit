@@ -66,16 +66,16 @@ $(document).ready(function(){
 		return (distance < c1.r + c2.r);
 	}
 	
-	function myShit(canvas){
+	function Canvas2dDrawer(){
 		var self = {
 			cnv : canvas,
 			ctx : canvas.getContext('2d')
 		};
 		
-		var _clear = function(){
+		function clear(){
 			self.ctx.clearRect(0, 0, self.cnv.width, self.cnv.height);
-		};
-		var _drawLine = function(sx, sy, ex, ey, color, width){
+		}
+		function drawLine(sx, sy, ex, ey, color, width){
 			if (color==undefined) color = '#000';
 			if (width==undefined) width = 2;
 			
@@ -85,8 +85,15 @@ $(document).ready(function(){
 			self.ctx.lineTo(ex, ey);
 			self.ctx.lineWidth = width;
 			self.ctx.stroke();
-		};
-		var _drawRect = function(x, y, w, h, lcolor, lwidth, bgcolor){
+		}
+		function drawRect(x, y, w, h, lcolor, lwidth, bgcolor){
+			if(x.hasOwnProperty('w')){
+				_drawRect(x.x, x.y, x.w, x.h, y, w, h);
+			}else{
+				_drawRect(x, y, w, h, lcolor, lwidth, bgcolor);
+			}
+		}
+		function _drawRect(x, y, w, h, lcolor, lwidth, bgcolor){
 			var filled = true;
 			if (lcolor==undefined) lcolor = '#000';
 			if (lwidth==undefined) lwidth = 2;
@@ -100,8 +107,15 @@ $(document).ready(function(){
 			self.ctx.lineWidth = lwidth;
 			self.ctx.strokeStyle = lcolor;
 			self.ctx.stroke();
-		};
-		var _drawCircle = function(x, y, r, lcolor, lwidth, bgcolor){
+		}
+		function drawCircle(x, y, r, lcolor, lwidth, bgcolor){
+			if(x.hasOwnProperty('r')){
+				_drawCircle(x.x, x.y, x.r, y, r, lcolor);
+			}else{
+				_drawCircle(x, y, r, lcolor, lwidth, bgcolor);
+			}
+		}
+		function _drawCircle(x, y, r, lcolor, lwidth, bgcolor){
 			var filled = true;
 			if (lcolor==undefined) lcolor = '#000';
 			if (lwidth==undefined) lwidth = 2;
@@ -115,8 +129,8 @@ $(document).ready(function(){
 			self.ctx.lineWidth = lwidth;
 			self.ctx.strokeStyle = lcolor;
 			self.ctx.stroke();
-		};
-		var _drawText = function(text, x, y, fonts, fontt, stroked){
+		}
+		function drawText(text, x, y, fonts, fontt, stroked){
 			fonts = fonts||30;
 			if (fontt==undefined) fontt="Arial";
 			if (stroked==undefined) stroked=false;
@@ -127,8 +141,8 @@ $(document).ready(function(){
 			}else{
 				self.ctx.fillText(text, x, y+fonts);
 			}
-		};
-		var _drawTextInRect = function(text, rect, fonts, fontt, stroked, color, autoAdjust){
+		}
+		function drawTextInRect(text, rect, fonts, fontt, stroked, color, autoAdjust){
 			fonts = fonts||30;
 			if (fontt==undefined) fontt="Arial";
 			if (stroked==undefined) stroked=false;
@@ -156,15 +170,15 @@ $(document).ready(function(){
 				self.ctx.fillStyle = color;
 				self.ctx.fillText(text, x, y);
 			}
-		};
+		}
 	
 		return{
-			clear:_clear,
-			drawLine:_drawLine,
-			drawRect:_drawRect,
-			drawCircle:_drawCircle,
-			drawText:_drawText,
-			drawTextInRect:_drawTextInRect
+			clear:			clear,
+			drawLine:		drawLine,
+			drawRect:		drawRect,
+			drawCircle:		drawCircle,
+			drawText:		drawText,
+			drawTextInRect:	drawTextInRect
 		};
 	}
 	
@@ -175,10 +189,10 @@ $(document).ready(function(){
 		thePills[getRandom(pillsCaseLength)] = posiblePills[i];
 	}
 		
-	function ge(canvas, period){
+	function GameEngine(canvas, period){
 		period = period||30;
 		var self = {
-			ms:new myShit(canvas),
+			ms:new Canvas2dDrawer(canvas),
 			keys:{},
 			period:period,
 			timer_id:null,
@@ -193,7 +207,7 @@ $(document).ready(function(){
 
 		function ball(x, y, r, speed, color){
 			var self = {
-				ms:new myShit(canvas),
+				ms:new Canvas2dDrawer(canvas),
 				x:x||10,
 				y:y||10,
 				r:r||8,
@@ -278,7 +292,7 @@ $(document).ready(function(){
 
 		function player(x, y, w, h, speed, color){
 			var self = {
-				ms:new myShit(canvas),
+				ms:new Canvas2dDrawer(canvas),
 				x:x||20,
 				y:y||canvas.height - 50,
 				w:w||100,
@@ -536,7 +550,7 @@ $(document).ready(function(){
 		};
 	}
 	
-	var g = new ge(document.getElementById('canvas'), 30);
+	var g = new GameEngine(document.getElementById('canvas'), 30);
 	g.init();
 	
 });
